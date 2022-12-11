@@ -14,33 +14,42 @@ export default function Chat() {
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
-  useEffect(async () => {
-    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-      navigate("/login");
-    } else {
-      setCurrentUser(
-        await JSON.parse(
-          localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-        )
-      );
-    }
-  }, []);
   useEffect(() => {
-    if (currentUser) {
-      socket.current = io(host);
-      socket.current.emit("add-user", currentUser._id);
+    async function roshan(){
+      if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+        navigate("/login");
+      } else {
+        setCurrentUser(
+          await JSON.parse(
+            localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+          )
+        );
+      }
     }
+ roshan();
+  }, []);
+  useEffect( () => {
+    async function roshan1(){
+      if (currentUser) {
+        socket.current = await io(host);
+        socket.current.emit("add-user", currentUser._id);
+      }
+    }
+    roshan1();
+    
   }, [currentUser]);
 
-  useEffect(async () => {
-    if (currentUser) {
+  useEffect( () => {
+    async function roshan2(){if (currentUser) {
       if (currentUser.isAvatarImageSet) {
         const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
         setContacts(data.data);
       } else {
         navigate("/setAvatar");
       }
-    }
+    }}
+    roshan2();
+    
   }, [currentUser]);
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
